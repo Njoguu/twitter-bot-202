@@ -14,35 +14,43 @@ auth = tweepy.OAuth1UserHandler(
 )
 api = tweepy.API(auth)
 
-
+# Limit Handler
 def limit_handler(cursor):
     try:
         while True:
             yield cursor.next()
     except tweepy.RateLimitError:
-        time.sleep(1000)
+        time.sleep(400)
 
+# Like Tweets with a certain keyword
+def like_tweets(search_string, numberOfTweets):
+    for tweet in tweepy.Cursor(api.search_tweets, search_string).items(numberOfTweets):
+        try:
+            tweet.favorite()
+            print('I liked that Tweet!')
+        except tweepy.errors.TweepyException as err:
+            print(err)
+        except StopIteration:
+            break
 
-search_string = 'Data Science'
-numberOfTweets = 5
+# TODO: follow people back
+def follow_back():
+    pass      
+    
+# TODO: retweet tweets mentioned in
+def retweet():
+    pass
 
-for tweet in tweepy.Cursor(api.search_tweets, search_string).items(numberOfTweets):
-    try:
-        tweet.favorite()
-        print('I liked that Tweet!')
-    except tweepy.errors.TweepyException as err:
-        print(err)
-    except StopIteration:
-        break
+# TODO: like tweets mentioned in
 
+if __name__ == '__main__':
 
+    # user = api.get_user(screen_name='twitter')
+    search_string = ['DataScience']
+    numberOfTweets = 6
 
+    like_tweets(search_string, numberOfTweets)
 
-
-
-
-
-
-
-
-# TODO Generous Bot
+    # set these to always run:
+    retweet()
+    follow_back()
